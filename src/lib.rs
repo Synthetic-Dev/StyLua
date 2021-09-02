@@ -38,6 +38,21 @@ impl Default for LineEndings {
     }
 }
 
+/// The type of line endings to use at the end of a line
+#[derive(Debug, Copy, Clone, Deserialize)]
+pub enum TableSeparators {
+    /// Separate values with Comma (`,`)
+    Comma,
+    /// Separate values with SemiColon (`;`)
+    SemiColon,
+}
+
+impl Default for TableSeparators {
+    fn default() -> Self {
+        TableSeparators::Comma
+    }
+}
+
 /// The style of quotes to use within string literals
 #[derive(Debug, Copy, Clone, Deserialize)]
 pub enum QuoteStyle {
@@ -95,6 +110,8 @@ pub struct Config {
     /// Whether to omit parentheses around function calls which take a single string literal or table.
     /// This is added for adoption reasons only, and is not recommended for new work.
     no_call_parentheses: bool,
+    /// The type of table separator to use.
+    table_sep: TableSeparators,
 }
 
 impl Config {
@@ -150,6 +167,14 @@ impl Config {
             ..self
         }
     }
+
+    /// Returns a new config with the given table separator
+    pub fn with_table_sep(self, table_sep: TableSeparators) -> Self {
+        Self {
+            table_sep,
+            ..self
+        }
+    }
 }
 
 impl Default for Config {
@@ -161,6 +186,7 @@ impl Default for Config {
             indent_width: 4,
             quote_style: QuoteStyle::default(),
             no_call_parentheses: false,
+            table_sep: TableSeparators::Comma,
         }
     }
 }

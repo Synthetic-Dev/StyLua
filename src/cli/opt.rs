@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 use structopt::{clap::arg_enum, StructOpt};
-use stylua_lib::{IndentType, LineEndings, QuoteStyle};
+use stylua_lib::{IndentType, LineEndings, QuoteStyle, TableSeparators};
 
 lazy_static::lazy_static! {
     static ref NUM_CPUS: String = num_cpus::get().to_string();
@@ -100,6 +100,9 @@ pub struct FormatOpts {
     /// The style of quotes to use in string literals.
     #[structopt(long, possible_values = &ArgQuoteStyle::variants(), case_insensitive = true, )]
     pub quote_style: Option<ArgQuoteStyle>,
+    /// The type of table separator to use.
+    #[structopt(long, possible_values = &ArgTableSeparators::variants(), case_insensitive = true, )]
+    pub table_sep: Option<ArgTableSeparators>,
 }
 
 // Convert [`stylua_lib::Config`] enums into clap-friendly enums
@@ -135,6 +138,11 @@ macro_rules! convert_enum {
         }
     };
 }
+
+convert_enum!(TableSeparators, ArgTableSeparators, {
+    Comma,
+    SemiColon,
+});
 
 convert_enum!(LineEndings, ArgLineEndings, {
     Unix,

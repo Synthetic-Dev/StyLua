@@ -1,5 +1,5 @@
 use crate::{
-    context::{create_indent_trivia, create_newline_trivia, Context},
+    context::{create_indent_trivia, create_newline_trivia, table_sep_character, Context},
     fmt_symbol,
     formatters::{
         expression::{format_expression, hang_expression},
@@ -200,6 +200,9 @@ where
     let mut current_fields = fields.pairs().peekable();
     let mut fields = Punctuated::new();
 
+    let mut symbol = table_sep_character(ctx.config().table_sep);
+    symbol.push_str(" ");
+
     while let Some(pair) = current_fields.next() {
         let (field, punctuation) = (pair.value(), pair.punctuation());
 
@@ -212,8 +215,8 @@ where
                 // Have more elements still to go
                 shape = shape + (formatted_field.to_string().len() + 2); // 2 = ", "
                 match punctuation {
-                    Some(punctuation) => Some(fmt_symbol!(ctx, punctuation, ", ", shape)),
-                    None => Some(TokenReference::symbol(", ").unwrap()),
+                    Some(punctuation) => Some(fmt_symbol!(ctx, punctuation, &symbol, shape)),
+                    None => Some(TokenReference::symbol(&symbol).unwrap()),
                 }
             }
             None => None,
@@ -249,6 +252,8 @@ where
     let current_fields = fields.pairs();
     let mut fields = Punctuated::new();
 
+    let symbol = &table_sep_character(ctx.config().table_sep);
+
     for pair in current_fields {
         let (field, punctuation) = (pair.value(), pair.punctuation());
 
@@ -278,8 +283,8 @@ where
         trailing_trivia.push(create_newline_trivia(ctx));
 
         let symbol = match punctuation {
-            Some(punctuation) => fmt_symbol!(ctx, punctuation, ",", shape),
-            None => TokenReference::symbol(",").unwrap(),
+            Some(punctuation) => fmt_symbol!(ctx, punctuation, symbol, shape),
+            None => TokenReference::symbol(symbol).unwrap(),
         }
         .update_trailing_trivia(FormatTriviaType::Append(trailing_trivia));
         let formatted_punctuation = Some(symbol);

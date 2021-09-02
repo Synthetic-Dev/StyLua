@@ -1,4 +1,4 @@
-use crate::{shape::Shape, Config, IndentType, LineEndings, Range as FormatRange};
+use crate::{shape::Shape, Config, IndentType, LineEndings, TableSeparators, Range as FormatRange};
 use full_moon::{
     node::Node,
     tokenizer::{Token, TokenType},
@@ -133,6 +133,14 @@ fn line_ending_character(line_endings: LineEndings) -> String {
     match line_endings {
         LineEndings::Unix => String::from("\n"),
         LineEndings::Windows => String::from("\r\n"),
+    }
+}
+
+/// Returns the relevant line ending string from the [`LineEndings`] enum
+pub fn table_sep_character(table_sep: TableSeparators) -> String {
+    match table_sep {
+        TableSeparators::Comma => String::from(","),
+        TableSeparators::SemiColon => String::from(";"),
     }
 }
 
