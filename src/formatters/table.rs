@@ -143,15 +143,21 @@ pub fn create_table_braces(
                     .update_leading_trivia(FormatTriviaType::Append(end_brace_leading_trivia));
 
             ContainedSpan::new(start_brace_token, end_brace_token)
-        }
+        },
 
-        TableType::SingleLine => ContainedSpan::new(
-            fmt_symbol!(ctx, start_brace, "{ ", shape),
-            fmt_symbol!(ctx, end_brace, " }", shape),
-        ),
+        TableType::SingleLine => {
+            let padding = if ctx.config().extra_spaces_inside_table { " " } else { "" };
+
+            ContainedSpan::new(
+                fmt_symbol!(ctx, start_brace, &format!("{}{}", "{", padding), shape),
+                fmt_symbol!(ctx, end_brace, &format!("{}{}", padding, "}"), shape),
+            )
+        },
 
         TableType::Empty => {
-            let start_brace = fmt_symbol!(ctx, start_brace, "{", shape);
+            let padding = if ctx.config().extra_spaces_inside_table && ctx.config().extra_space_in_empty_table { " " } else { "" };
+
+            let start_brace = fmt_symbol!(ctx, start_brace, &format!("{}{}", "{", padding), shape);
             let end_brace = fmt_symbol!(ctx, end_brace, "}", shape);
             // Remove any newline trivia trailing the start brace, as it shouldn't be present
             let start_brace_trailing_trivia = start_brace
@@ -219,7 +225,11 @@ where
                     None => Some(TokenReference::symbol(&symbol).unwrap()),
                 }
             }
-            None => None,
+            None if ctx.config().extra_sep_at_table_end => {
+                shape = shape + (formatted_field.to_string().len() + 1); // 1 = ","
+                Some(TokenReference::symbol(&table_sep_character(ctx.config().table_sep)).unwrap())
+            }
+            None => None
         };
 
         fields.push(Pair::new(formatted_field, formatted_punctuation))

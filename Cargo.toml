@@ -20,7 +20,7 @@ name = "stylua"
 path = "src/cli/main.rs"
 
 [features]
-default = []
+default = ["luau"]
 luau = ["full_moon/roblox"]
 lua52 = ["full_moon/lua52"]
 

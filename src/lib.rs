@@ -111,7 +111,17 @@ pub struct Config {
     /// This is added for adoption reasons only, and is not recommended for new work.
     no_call_parentheses: bool,
     /// The type of table separator to use.
+    /// Default is recommended for opinionated reasons.
     table_sep: TableSeparators,
+    /// Whether to add an additional table separator to the end of the last value in a table.
+    /// Default is recommended for opinionated reasons.
+    extra_sep_at_table_end: bool,
+    /// Whether to pad the inside of table braces with additional spaces.
+    /// Default is recommended for opinionated reasons.
+    extra_spaces_inside_table: bool,
+    /// Whether to add an additional space inside of an empty table.
+    /// Default is recommended for opinionated reasons.
+    extra_space_in_empty_table: bool,
 }
 
 impl Config {
@@ -175,6 +185,30 @@ impl Config {
             ..self
         }
     }
+
+    /// Returns a new config with the given value for [`extra_sep_at_table_end`]
+    pub fn with_extra_sep_at_table_end(self, extra_sep_at_table_end: bool) -> Self {
+        Self {
+            extra_sep_at_table_end,
+            ..self
+        }
+    }
+    
+    /// Returns a new config with the given value for [`extra_spaces_inside_table`]
+    pub fn with_extra_spaces_inside_table(self, extra_spaces_inside_table: bool) -> Self {
+        Self {
+            extra_spaces_inside_table,
+            ..self
+        }
+    }
+    
+    /// Returns a new config with the given value for [`extra_space_in_empty_table`]
+    pub fn with_extra_space_in_empty_table(self, extra_space_in_empty_table: bool) -> Self {
+        Self {
+            extra_space_in_empty_table,
+            ..self
+        }
+    }
 }
 
 impl Default for Config {
@@ -187,6 +221,9 @@ impl Default for Config {
             quote_style: QuoteStyle::default(),
             no_call_parentheses: false,
             table_sep: TableSeparators::Comma,
+            extra_sep_at_table_end: false,
+            extra_spaces_inside_table: true,
+            extra_space_in_empty_table: false,
         }
     }
 }

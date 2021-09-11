@@ -137,6 +137,9 @@ StyLua only offers the following options:
 | `quote_style` | `AutoPreferDouble` | Types of quotes to use for string literals. Possible options: `AutoPreferDouble`, `AutoPreferSingle`, `ForceDouble`, `ForceSingle`. In `AutoPrefer` styles, we prefer the quote type specified, but fall back to the opposite if it leads to fewer escapes in the string. `Force` styles always use the style specified regardless of escapes.
 | `no_call_parentheses` | `false` | A style option added for adoption purposes. When enabled, parentheses are removed around function arguments where a single string literal/table is passed. Note: parentheses are still kept in some situations if removing them will make the syntax become obscure (e.g. `foo "bar".setup -> foo("bar").setup`, as we are indexing the call result, not the string)
 | `table_sep` | `Comma` | Type of table separator to use. Possible options: `Comma` (,) or `SemiColon` (;)
+| `extra_sep_at_table_end` | `false` | A style option for putting the `table_sep` at the end of the last value in a table.
+| `extra_spaces_inside_table` | `true` | A style option for if there should be a space between the braces and the first/last values.
+| `extra_space_in_empty_table` | `false` | A style option that only applies if `extra_spaces_inside_table` is `true` and whether an empty table should contain a space.
 
 Default `stylua.toml`, note you do not need to explicitly specify each option if you want to use the defaults:
 ```toml
