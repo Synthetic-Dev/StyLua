@@ -149,4 +149,8 @@ indent_type = "Tabs"
 indent_width = 4
 quote_style = "AutoPreferDouble"
 no_call_parentheses = false
+table_sep = "Comma"
+extra_sep_at_table_end = false
+extra_spaces_inside_table = true
+extra_space_in_empty_table = false
 ```
