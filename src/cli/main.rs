@@ -34,7 +34,7 @@ macro_rules! verbose_println {
 
 macro_rules! error {
     ($opt:expr, $fmt:expr, $($args:tt)*) => {
-        error(std::fmt::format(format_args!($fmt, $($args)*)), $opt.color.should_use_color());
+        error(std::fmt::format(format_args!($fmt, $($args)*)), $opt.color.should_use_color())
     };
 }
 
@@ -200,7 +200,7 @@ fn format(opt: opt::Opt) -> Result<i32> {
         "creating a pool with {} threads",
         opt.num_threads
     );
-    let pool = ThreadPool::new(opt.num_threads);
+    let pool = ThreadPool::new(std::cmp::max(opt.num_threads, 2)); // Use a minimum of 2 threads, because we need atleast one output reader as well as a formatter
     let (tx, rx) = crossbeam_channel::unbounded();
     let opt = Arc::new(opt);
 
@@ -268,7 +268,13 @@ fn format(opt: opt::Opt) -> Result<i32> {
                         // We should ignore the glob check if the path provided was explicitly given to the CLI
                         if use_default_glob && !opt.files.iter().any(|p| path == *p) {
                             lazy_static::lazy_static! {
-                                static ref DEFAULT_GLOB: globset::GlobMatcher = globset::Glob::new("**/*.lua").expect("cannot create default glob").compile_matcher();
+                                static ref DEFAULT_GLOB: globset::GlobSet = {
+                                    let mut builder = globset::GlobSetBuilder::new();
+                                    builder.add(globset::Glob::new("**/*.lua").expect("cannot create default glob"));
+                                    #[cfg(feature = "luau")]
+                                    builder.add(globset::Glob::new("**/*.luau").expect("cannot create default luau glob"));
+                                    builder.build().expect("cannot build default globset")
+                                };
                             }
                             if !DEFAULT_GLOB.is_match(&path) {
                                 continue;
