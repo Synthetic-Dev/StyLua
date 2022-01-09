@@ -118,7 +118,7 @@ fn attempt_assignment_tactics(
 
         if expressions.pairs().any(|pair| {
             pair.punctuation()
-                .map_or(false, |x| trivia_util::token_contains_comments(x))
+                .map_or(false, trivia_util::token_contains_comments)
                 || trivia_util::expression_contains_inline_comments(pair.value())
         }) || hanging_shape
             .take_first_line(&strip_trivia(&expr_list))
@@ -238,7 +238,7 @@ pub fn format_assignment(ctx: &Context, assignment: &Assignment, shape: Shape) -
     let contains_comments = trivia_util::token_contains_comments(assignment.equal_token())
         || assignment.expressions().pairs().any(|pair| {
             pair.punctuation()
-                .map_or(false, |x| trivia_util::token_contains_comments(x))
+                .map_or(false, trivia_util::token_contains_comments)
                 || trivia_util::expression_contains_inline_comments(pair.value())
         });
 
@@ -322,14 +322,14 @@ fn format_local_no_assignment(
         name_list = name_list.update_trailing_trivia(FormatTriviaType::Append(trailing_trivia))
     }
 
-    let local_assignment = LocalAssignment::new(name_list)
-        .with_local_token(local_token)
-        .with_equal_token(None)
-        .with_expressions(Punctuated::new());
-
+    let local_assignment = LocalAssignment::new(name_list);
     #[cfg(feature = "luau")]
     let local_assignment = local_assignment.with_type_specifiers(type_specifiers);
+
     local_assignment
+        .with_local_token(local_token)
+        .with_equal_token(None)
+        .with_expressions(Punctuated::new())
 }
 
 pub fn format_local_assignment(
@@ -349,10 +349,10 @@ pub fn format_local_assignment(
         // and format multiline
         let contains_comments = assignment
             .equal_token()
-            .map_or(false, |x| trivia_util::token_contains_comments(x))
+            .map_or(false, trivia_util::token_contains_comments)
             || assignment.expressions().pairs().any(|pair| {
                 pair.punctuation()
-                    .map_or(false, |x| trivia_util::token_contains_comments(x))
+                    .map_or(false, trivia_util::token_contains_comments)
                     || trivia_util::expression_contains_inline_comments(pair.value())
             });
 
@@ -421,12 +421,12 @@ pub fn format_local_assignment(
         // Add necessary trivia
         let expr_list = expr_list.update_trailing_trivia(FormatTriviaType::Append(trailing_trivia));
 
-        let local_assignment = LocalAssignment::new(name_list)
-            .with_local_token(local_token)
-            .with_equal_token(Some(equal_token))
-            .with_expressions(expr_list);
+        let local_assignment = LocalAssignment::new(name_list);
         #[cfg(feature = "luau")]
         let local_assignment = local_assignment.with_type_specifiers(type_specifiers);
         local_assignment
+            .with_local_token(local_token)
+            .with_equal_token(Some(equal_token))
+            .with_expressions(expr_list)
     }
 }

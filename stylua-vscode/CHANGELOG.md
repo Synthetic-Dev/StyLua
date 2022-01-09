@@ -9,7 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 To view the changelog of the StyLua binary, see [here](https://github.com/JohnnyMorganz/StyLua/blob/master/CHANGELOG.md)
 
-## [Unreleased]
+## [1.3.1] - 2021-11-19
+
+### Fixed
+
+- Removed unnecessary quiet request for authorisation with GitHub on extension activation. Authorisation is only necessary when hitting GitHub rate limit requests.
+
+## [1.3.0] - 2021-11-19
 
 ### Added
 
